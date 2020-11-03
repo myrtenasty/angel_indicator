@@ -2,9 +2,9 @@
 #define wait 200 // wait 200 milliseconds after an angel is given
 #define pi 3.1415926
 
-int A = 2; // mic A pin
-int B = 3; // mic B pin
-int C = 4; // mic C pin
+const int A = 2; // mic A pin
+const int B = 3; // mic B pin
+const int C = 4; // mic C pin
 float t1; // micro second time when the first mic is triggered
 float t2; // micro second time when the second mic is triggered
 float testDelay;
@@ -48,7 +48,8 @@ void loop() {
     int z = digitalRead_fast(B) - digitalRead_fast(C);
     float t3 = t2 - t1;
     Serial.println(z);
-    if (abs(t3) > 1000 || t1 == 0) {}
+    float vSin = (t3 * 0.000001 * soundVel) / dis;
+    if (abs(t3) > 1000 || t1 == 0 || abs(vSin) >= 1) {}
     else {
       angel = rad(t3, A, z);
       delay(20);
@@ -63,7 +64,8 @@ void loop() {
     t2 = micros();
     int z = digitalRead_fast(C) - digitalRead_fast(A);
     float t3 = t2 - t1;
-    if (abs(t3) > 1000 || t1 == 0) {}
+    float vSin = (t3 * 0.000001 * soundVel) / dis;
+    if (abs(t3) > 1000 || t1 == 0 || abs(vSin) >= 1) {}
     else {
       angel = rad(t3, B, z);
       delay(20);
@@ -78,7 +80,8 @@ void loop() {
     t2 = micros();
     int z = digitalRead_fast(A) - digitalRead_fast(B);
     float t3 = t2 - t1;
-    if (abs(t3) > 1000 || t1 == 0) {}
+    float vSin = (t3 * 0.000001 * soundVel) / dis;
+    if (abs(t3) > 1000 || t1 == 0 || abs(vSin) >= 1) {}
     else {
       angel = rad(t3, C, z);
       delay(20);
@@ -101,13 +104,13 @@ float rad(float dt, int mic, int zone) {
 
   switch (mic)
   {
-  case 2:
+  case A:
     ang = 0 + dir * (60 - 180 / pi * asin((dt * 0.000001 * soundVel) / dis));
     break;
-  case 3:
+  case B:
     ang = -120 + dir * (60 - 180 / pi * asin((dt * 0.000001 * soundVel) / dis));
     break;
-  case 4:
+  case C:
     ang = 120 + dir * (60 - 180 / pi * asin((dt * 0.000001 * soundVel) / dis));
     break;
   default:
