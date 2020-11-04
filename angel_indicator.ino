@@ -1,4 +1,4 @@
-#define dis 0.200 // distance of 2 mics
+#define dis 0.360 // distance of 2 mics
 #define wait 200 // wait 200 milliseconds after an angel is given
 #define pi 3.1415926
 
@@ -47,13 +47,17 @@ void loop() {
     t2 = micros();
     int z = digitalRead_fast(B) - digitalRead_fast(C);
     float t3 = t2 - t1;
-    Serial.println(z);
     float vSin = (t3 * 0.000001 * soundVel) / dis;
     if (abs(t3) > 1000 || t1 == 0 || abs(vSin) >= 1) {}
     else {
       angel = rad(t3, A, z);
       delay(20);
-      Serial.println(String(t3) + ", " + String(angel) + " A");
+      if (z > 0) {
+        Serial.println(String(t3) + ", " + String(angel) + " A C B");
+      }
+      else {
+        Serial.println(String(t3) + ", " + String(angel) + " A B C");
+      }
     }
     delay(wait);
   }
@@ -69,7 +73,12 @@ void loop() {
     else {
       angel = rad(t3, B, z);
       delay(20);
-      Serial.println(String(t3) + ", " + String(angel) + " B");
+      if (z > 0) {
+        Serial.println(String(t3) + ", " + String(angel) + " B A C");
+      }
+      else {
+        Serial.println(String(t3) + ", " + String(angel) + " B C A");
+      }
     }
     delay(wait);
   }
@@ -85,7 +94,12 @@ void loop() {
     else {
       angel = rad(t3, C, z);
       delay(20);
-      Serial.println(String(t3) + ", " + String(angel) + " C");
+      if (z > 0) {
+        Serial.println(String(t3) + ", " + String(angel) + " C B A");
+      }
+      else {
+        Serial.println(String(t3) + ", " + String(angel) + " C A B");
+      }
     }
     delay(wait);
   }
@@ -104,17 +118,17 @@ float rad(float dt, int mic, int zone) {
 
   switch (mic)
   {
-  case A:
-    ang = 0 + dir * (60 - 180 / pi * asin((dt * 0.000001 * soundVel) / dis));
-    break;
-  case B:
-    ang = -120 + dir * (60 - 180 / pi * asin((dt * 0.000001 * soundVel) / dis));
-    break;
-  case C:
-    ang = 120 + dir * (60 - 180 / pi * asin((dt * 0.000001 * soundVel) / dis));
-    break;
-  default:
-    break;
+    case A:
+      ang = 0 + dir * (60 - 180 / pi * asin((dt * 0.000001 * soundVel) / dis));
+      break;
+    case B:
+      ang = -120 + dir * (60 - 180 / pi * asin((dt * 0.000001 * soundVel) / dis));
+      break;
+    case C:
+      ang = 120 + dir * (60 - 180 / pi * asin((dt * 0.000001 * soundVel) / dis));
+      break;
+    default:
+      break;
   }
 
   return ang;
